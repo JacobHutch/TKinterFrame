@@ -8,7 +8,7 @@
 
 import tkinter as tk
 import os
-from PyGameTest import testPygame
+from PyGameTestExperimental import testPygame
 from Ball import collisionTest
 
 class App:

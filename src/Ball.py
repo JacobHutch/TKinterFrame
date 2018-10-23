@@ -6,6 +6,8 @@ class collisionTest:
           self.type="tkinter"
           self.frame=gameFrame
           self.menu=menuRoot
+          self.labelTest = tk.Label(self.frame, text="Test")
+          self.labelTest.pack(fill=tk.BOTH, expand=0)
           self.width=width
           self.height=height
           self.radius=8
@@ -28,6 +30,8 @@ class collisionTest:
           self.frame.bind_all("<r>", self.reset)
           self.frame.bind_all("<Left>", self.rotateLeft)
           self.frame.bind_all("<Right>", self.rotateRight)
+          self.frame.bind_all("<Up>", self.speed)
+          self.frame.bind_all("<Down>", self.slow)
 
      def reset(self, event):
           self.p=[self.width/2,self.height/2]
@@ -45,6 +49,8 @@ class collisionTest:
           self.v[0]=self.clamp(self.v[0]-10,0,100)
 
      def eventLoop(self):
+          #print(self.p[0],self.p[1],self.v[0],self.v[1]*180/m.pi)
+          self.labelTest["text"]="X:"+str(int(self.p[0]))+" Y:"+str(int(self.p[1]))
           self.canvas.delete("ball","line")
           self.ball=self.canvas.create_oval(self.p[0]-self.radius,
                                             self.p[1]-self.radius,
