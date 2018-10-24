@@ -32,6 +32,7 @@ class collisionTest:
           self.frame.bind_all("<Right>", self.rotateRight)
           self.frame.bind_all("<Up>", self.speed)
           self.frame.bind_all("<Down>", self.slow)
+          self.frame.bind_all("<t>", self.config)
 
      def reset(self, event):
           self.p=[self.width/2,self.height/2]
@@ -48,9 +49,18 @@ class collisionTest:
      def slow(self, event):
           self.v[0]=self.clamp(self.v[0]-10,0,100)
 
+     def config(self, event):
+          self.conf=tk.Tk()
+          self.conf.title("Config")
+          self.conf.geometry("200x200")
+          self.conf["background"]="#123456"
+          self.conf.resizable(0,0)
+
      def eventLoop(self):
           #print(self.p[0],self.p[1],self.v[0],self.v[1]*180/m.pi)
-          self.labelTest["text"]="X:"+str(int(self.p[0]))+" Y:"+str(int(self.p[1]))
+          self.labelTest["text"]=(
+               "X:"+str(int(self.p[0]))+"\tY:"+str(int(self.p[1]))+
+               "\t\tV:"+str(int(self.v[0]))+"\tA:"+str(int((self.v[1]*180/m.pi%360)+.5)))
           self.canvas.delete("ball","line")
           self.ball=self.canvas.create_oval(self.p[0]-self.radius,
                                             self.p[1]-self.radius,
