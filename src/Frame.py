@@ -23,11 +23,11 @@ class App:
         #Initial Functions
         self.menuSetup()
         self.keyBinds()
-        
+
         #Main Frame  (haha)
         self.width=500
         self.height=500
-        self.frame=tk.Frame(bg="#FF0000", width=self.width, height=self.height)
+        self.frame=tk.Frame(bg="#7F0000", width=self.width, height=self.height)
         self.frame.pack_propagate(0)
         self.frame.pack(fill=tk.NONE, expand=1)
 
@@ -37,7 +37,7 @@ class App:
         #Game Object goes here
         #self.game = exampleProgram(gameFrame=self.frame, menuRoot=self.menu, width=self.width, height=self.height)
         #self.game = testPygame()
-        self.game = collisionTest(gameFrame=self.frame, menuRoot=self.menu, width=self.width, height=self.height)        
+        self.game = collisionTest(gameFrame=self.frame, menuRoot=self.menu, width=self.width, height=self.height)
 
     def endProgram(self, event):
         self.ui.destroy()
@@ -47,7 +47,7 @@ class App:
         self.ui["menu"]=self.menu
 
         self.menuFile = tk.Menu(self.menu, tearoff=0)
-        
+
         self.menuFile.add_command(label="Quit", command=self.ui.destroy, underline=0, accelerator="Q")
 
         self.menu.add_cascade(label="File", underline=0, menu=self.menuFile)
@@ -66,7 +66,7 @@ class exampleProgram:
         self.height=height
 
         self.gameTick=60
-        
+
         self.canvas=tk.Canvas(self.frame)
         self.canvas["background"]="#001F4F"
         self.canvas.pack(fill=tk.BOTH, expand=1)
@@ -108,14 +108,14 @@ class exampleProgram:
 
     def menuSetup(self):
         self.menuGame = tk.Menu(self.menu, tearoff=0)
-        
+
         self.menuGame.add_command(label="Reset Ball", command=lambda:self.ballPos(self.ballPosx1, self.ballPosy1, self.ballPosx2, self.ballPosy2), underline=0, accelerator="R")
-        
+
         self.menu.add_cascade(label="Game", underline=0, menu=self.menuGame)
 
     def ballPos(self, x1, y1, x2, y2):
         self.canvas.coords(self.ball, x1, y1, x2, y2)
-        
+
     def resetBall(self, event):
         self.ballPos(self.ballPosx1, self.ballPosy1, self.ballPosx2, self.ballPosy2)
 
@@ -133,7 +133,7 @@ class exampleProgram:
 
     def ball2Pos(self, x1, y1, x2, y2):
         self.canvas.coords(self.ball2, x1, y1, x2, y2)
-        
+
     def resetBall2(self, event):
         self.ball2Pos(self.ball2Posx1, self.ball2Posy1, self.ball2Posx2, self.ball2Posy2)
 
@@ -148,7 +148,7 @@ class exampleProgram:
 
     def moveRight2(self, event):
         self.canvas.move(self.ball2, self.ballSpeed, 0)
-        
+
 
 class examplePygame:
     def __init__(self):
@@ -162,4 +162,3 @@ if __name__=="__main__":
     app.ui.mainloop()
     if app.game.type=="pygame":
          app.game.eventLoop()
-

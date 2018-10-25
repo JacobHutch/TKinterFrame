@@ -6,15 +6,17 @@ class collisionTest:
           self.type="tkinter"
           self.frame=gameFrame
           self.menu=menuRoot
-          self.labelTest = tk.Label(self.frame, text="Test")
-          self.labelTest.pack(fill=tk.BOTH, expand=0)
-          self.width=width
-          self.height=height
+          self.width=400
+          self.height=400
           self.radius=8
 
-          self.canvas=tk.Canvas(self.frame)
-          self.canvas["background"]="#001F4F"
-          self.canvas.pack(fill=tk.BOTH, expand=1)
+          self.labelTest = tk.Label(self.frame, text="Test", background="#FFFFFF")
+          self.labelTest.pack(fill=tk.BOTH, expand=0)
+
+          self.canvas=tk.Canvas(self.frame, background="#001F4F",
+                                width=self.width,height=self.height)
+          #self.canvas["background"]="#001F4F"
+          self.canvas.pack(fill=tk.NONE, expand=0)
 
           self.keyBinds()
 
@@ -44,10 +46,10 @@ class collisionTest:
           self.v[1]+=self.rotateMagnitude
 
      def speed(self, event):
-          self.v[0]=self.clamp(self.v[0]+10,0,100)
+          self.v[0]=self.clamp(self.v[0]+10,-100,100)
 
      def slow(self, event):
-          self.v[0]=self.clamp(self.v[0]-10,0,100)
+          self.v[0]=self.clamp(self.v[0]-10,-100,100)
 
      def config(self, event):
           self.conf=tk.Tk()
@@ -57,23 +59,31 @@ class collisionTest:
           self.conf.resizable(0,0)
 
      def eventLoop(self):
-          #print(self.p[0],self.p[1],self.v[0],self.v[1]*180/m.pi)
           self.labelTest["text"]=(
                "X:"+str(int(self.p[0]))+"\tY:"+str(int(self.p[1]))+
                "\t\tV:"+str(int(self.v[0]))+"\tA:"+str(int((self.v[1]*180/m.pi%360)+.5)))
           self.canvas.delete("ball","line")
+
+          self.nline=self.canvas.create_line(self.p[0],self.p[1],
+                                            self.p[0]+self.lineRadius*m.cos(self.v[1]),
+                                            self.p[1]+self.lineRadius*m.sin(self.v[1]),
+                                            fill="#FF0000", tags=("line"))
+
+          self.sline=self.canvas.create_line(self.p[0],self.p[1],
+                                            self.p[0]+self.lineRadius/2*-m.cos(self.v[1]),
+                                            self.p[1]+self.lineRadius/2*-m.sin(self.v[1]),
+                                            fill="#FFFFFF", tags=("line"))
+
           self.ball=self.canvas.create_oval(self.p[0]-self.radius,
                                             self.p[1]-self.radius,
                                             self.p[0]+self.radius,
                                             self.p[1]+self.radius,
                                             fill="#FFFFFF", tags=("ball"))
-          self.line=self.canvas.create_line(self.p[0],self.p[1],
-                                            self.p[0]+self.lineRadius*m.cos(self.v[1]),
-                                            self.p[1]+self.lineRadius*m.sin(self.v[1]),
-                                            fill="#ffffff", tags=("line"))
-          
-          self.p[0] += (self.v[0] * m.cos(self.v[1]) * 1/self.gameTick)
-          self.p[1] += (self.v[0] * m.sin(self.v[1]) * 1/self.gameTick)
+
+          self.p[0] = self.clamp(self.p[0]+(self.v[0] * m.cos(self.v[1]) *
+                                            1/self.gameTick),0,self.width)
+          self.p[1] = self.clamp(self.p[1]+(self.v[0] * m.sin(self.v[1]) *
+                                            1/self.gameTick),0,self.height)
           self.frame.after(int(1000/self.gameTick), self.eventLoop)
 
      def clamp(self, num, low, high):
