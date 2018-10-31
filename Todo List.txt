@@ -1,9 +1,6 @@
 - Add menu functionality
-- Probably rewrite a lot of code
-  - Figure out a better way to optimize
-  - It's not quite as modular as I'd like
+- Implement event loop
+- Implement keybindings
+
 - Clean up the pygame stuff (it's not broken, just in the way and incomplete)
   - Pygame will be implemented after I have a more stable version for tkinter
-- I want the tkframe to act as more of a module, rather than the game being the module
-  - Currently you have to run the frame, which will then call the game as a module,
-    instead of running the game and using the frame as the module
