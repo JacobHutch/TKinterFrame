@@ -1,6 +1,6 @@
 - Add menu functionality
 - Implement event loop
-- Implement keybindings
 
 - Clean up the pygame stuff (it's not broken, just in the way and incomplete)
   - Pygame will be implemented after I have a more stable version for tkinter
+    apps
