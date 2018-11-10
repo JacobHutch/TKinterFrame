@@ -30,3 +30,6 @@ class App:
 	def bindKeys(self,**keyBindList):
 		for char in keyBindList:
 			self.ui.bind_all('<'+char+'>',keyBindList[char])
+
+	def clamp(self, num, min, max):
+		return max(min(num,max),min)
