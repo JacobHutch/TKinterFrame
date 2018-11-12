@@ -1,4 +1,25 @@
 Thoughts/Notes on Now:----------------------------------------------------------
+- New commit, new me
+
+- I fixed the squares, they actually scale the right way now
+
+- I now need to fix the display system
+  - I also would like to sort out any redundancies and temp variables I have
+    before I keep going
+
+- Playing with the sizes, I've noted that the world size can be about 2000^2
+  max with the random colors, and the camera size probably shouldn't go over 75
+--------------------------------------------------------------------------------
+
+
+Stuff for Later:----------------------------------------------------------------
+- Keep fixing the display
+- Implement event loop?
+- Add world gen algorithms
+--------------------------------------------------------------------------------
+
+
+Questions:----------------------------------------------------------------------
 - Idk if I should run the game immediately (during init) or later after the
   class object is created: basically, should the init function act as the main
   function?
@@ -6,47 +27,10 @@ Thoughts/Notes on Now:----------------------------------------------------------
 - Working on the menu function now, I'm trying to figure out how to format it
   should the menu just be in the game function?
   - I think for now I'm just gonna put it in Game.py
-
-- So I added the menus directly to the game object because I need to specify
-  specific variables for each menu, which idk how to do
-
-- I made the world array, so far it's just random colors, now I have to figure
-  out how to display it
-
-- Displaying brought a whole new mass of checkboxes into light
-  - I need a coordinate system
-  - I need to be able to base the display off of the coordinate system
-  - I have to figure out how to display the right squares
-
-- This commit is going to be massive, idk if that's good etiquette
-
-- I think I'm pre-optimizing my world drawing function, because I'm only
-  drawing what's going to be on the screen, rather than drawing the entire
-  map and moving it
-
-- I added a movement system, which doubles as a reset function, I'm very proud
-  of myself
-
-- One side note: The frame is basically complete but I'm really interested in
-  finishing this game
-
-- I was thinking and I'm actually unsure if I need an event loop for this game
-  since it's movement/event based.
-
-- Oh my goodness I actually did something that looks good
-  - I can display the world now! It's not quite perfect, I realized I have to
-    rewrite a bunch of stuff anyway, but it still looks nice
 --------------------------------------------------------------------------------
 
 
-Stuff for Later:----------------------------------------------------------------
-- Fix the display function
-- Implement event loop?
-- Add world gen algorithms
---------------------------------------------------------------------------------
-
-
-Stuff for Later Later-----------------------------------------------------------
+Stuff for Later Later:----------------------------------------------------------
 - Maybe generate an actual narrative
 - Clean up the pygame stuff (it's not broken, just in the way and incomplete)
   - Pygame will be implemented after I have a more stable version for tkinter
