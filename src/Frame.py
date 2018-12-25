@@ -1,7 +1,4 @@
 '''
-!- Keep in mind I have no idea what I'm doing in terms of writing
-	professionally clean code -!
-
 Options:
 name - string : 'Title'
 size - tuple  : (x,y)
@@ -30,6 +27,3 @@ class App:
 	def bindKeys(self,**keyBindList):
 		for char in keyBindList:
 			self.ui.bind_all('<'+char+'>',keyBindList[char])
-
-	def clamp(self, num, min, max):
-		return max(min(num,max),min)

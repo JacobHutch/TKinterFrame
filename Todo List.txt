@@ -9,6 +9,41 @@ Thoughts/Notes on Now:----------------------------------------------------------
 
 - Playing with the sizes, I've noted that the world size can be about 2000^2
   max with the random colors, and the camera size probably shouldn't go over 75
+---
+- So I'm still trying to limit the display, I fixed the index errors though
+
+- I've noticed my code just gets worse and worse as I progress oof
+
+- Ok I had a crazy idea: what if I make all the tiles objects? so I set them
+  equal to a variable and put them in an array, then only change the colors?
+  idk if that would be more or less inefficient
+  - I don't think it'll be very efficient
+
+- I lied about the tile number, it shouldn't go over 45, it can go up to around
+  75 without being detrimental, but it's noticeable from 50 upwards
+
+- I just spent 20 minutes making a function that maximizes the window when you
+  press a button, and then I remembered it was pointless
+
+- I should figure out how to pull branches
+
+- I'm kinda thinking big right now, I might create the event loop now before I
+  continue with the display. Also, I'm thinking of making the world it's own
+  object, which might be overkill idk
+
+- Ok I tried the event loop and now I'm unsure if I need it again
+  - I'll figure it out Later
+
+- I think I need to rewrite some or most of the display function
+
+- I should probably start using branches
+  - And to do that I gotta modulate some stuff
+  - Nvm I don't wanna
+
+- For my event loop I think I'll just call it with no delay, so long as it
+  doesn't clog up anything
+
+- Holy moly I actually finished the display
 --------------------------------------------------------------------------------
 
 
@@ -16,6 +51,7 @@ Stuff for Later:----------------------------------------------------------------
 - Keep fixing the display
 - Implement event loop?
 - Add world gen algorithms
+- Have a narrative
 --------------------------------------------------------------------------------
 
 
@@ -24,14 +60,12 @@ Questions:----------------------------------------------------------------------
   class object is created: basically, should the init function act as the main
   function?
 
-- Working on the menu function now, I'm trying to figure out how to format it
-  should the menu just be in the game function?
+- Should the menu just be in the game function?
   - I think for now I'm just gonna put it in Game.py
 --------------------------------------------------------------------------------
 
 
 Stuff for Later Later:----------------------------------------------------------
-- Maybe generate an actual narrative
 - Clean up the pygame stuff (it's not broken, just in the way and incomplete)
   - Pygame will be implemented after I have a more stable version for tkinter
     apps
