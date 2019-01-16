@@ -12,8 +12,10 @@ class test:
 import Frame as tkf
 import tkinter as tk
 from tkinter import simpledialog
-import time
+from tkinter import colorchooser
 import random as rand
+from WorldGen import World
+
 
 rand.seed(1)
 appOptions={'name':'Potential Walking Simulator',
@@ -25,19 +27,22 @@ class Game:
 		self.menuSetup()
 
 		#Dict format: 'char':function
-		self.keyBinds={'q':self.kill,'t':self.mosaicChange,#'b':self.bgColor,
+		self.keyBinds={'q':self.kill,'t':self.mosaicChange,'b':self.bgColor,
 		'Up':self.movement,'Down':self.movement,'Left':self.movement,
-		'Right':self.movement,'r':self.movement,'c':self.coordChange}
+		'Right':self.movement,'r':self.movement,'c':self.coordChange
+		}
 		self.base.bindKeys(**self.keyBinds)
 		self.gameTick = 60  #Ticks per second
 
+		self.fullscreenBool = False
 		self.mosaicBool = False
 		self.mosaic = int(self.mosaicBool)
 
 		self.canvasSize=(500,500)
 		self.worldSize=(100,100)
+		self.world = World(self.worldSize)
+		self.world.worldGen()
 		self.worldInit(self.canvasSize[0],self.canvasSize[1])
-		self.worldGen()
 		self.worldDisplay()
 		self.drawPlayer()
 
@@ -61,31 +66,12 @@ class Game:
 		self.canvas=tk.Canvas(self.base.ui, width=width, height=height,background=self.base.bg,highlightthickness=0)
 		self.canvas.pack(fill=tk.NONE, expand=1)
 
-		self.world = [[0 for x in range(self.worldSize[0])] for y in range(self.worldSize[1])]
-
-	def worldGen(self):
-		print('Generating world, please wait')
-		self.worldGenTime = time.time()
-		cra = [0,127,0,127,40,127]
-		r,c=0,0
-		for x in self.world:
-			for y in x:
-				self.world[r][c] = '#{}{}{}'.format(hex(rand.randint(cra[0],cra[1])).split('x')[-1].zfill(2),hex(rand.randint(cra[2],cra[3])).split('x')[-1].zfill(2),hex(rand.randint(cra[4],cra[5])).split('x')[-1].zfill(2))
-				c+=1
-			c=0
-			r+=1
-		self.worldGenTime = format(time.time() - self.worldGenTime, '0.2f')
-		print(self.world)
-		print('Done in {} seconds.\n'.format(self.worldGenTime))
-
 	def worldDisplay(self):
-	#x and y are flipped from array to display because of math, and the flip should
-	#	be isolated to the display so the array changing doesn't need extra thinking
-		for x in range(self.displaySize):
-			for y in range(self.displaySize):
+		for y in range(self.displaySize):
+			for x in range(self.displaySize):
 				self.canvas.create_rectangle(self.squareSize*x+self.mosaic,self.squareSize*y+self.mosaic,
 				self.squareSize*(x+1)-self.mosaic,self.squareSize*(y+1)-self.mosaic,
-				fill=self.world[min(max(y+self.yDiff,0),self.worldSize[1]-1)][min(max(x+self.xDiff,0),self.worldSize[0]-1)],outline='',tags=('tile'))
+				fill=self.world.mapExternal[min(max(y+self.yDiff,0),self.worldSize[1]-1)][min(max(x+self.xDiff,0),self.worldSize[0]-1)],outline='',tags=('tile'))
 
 	def drawPlayer(self):
 		radius = 2
@@ -116,8 +102,21 @@ class Game:
 	def kill(self, event=None):
 		self.base.ui.destroy()
 
+	def fullscreen(self, event=None):
+		if self.fullscreenBool:
+			self.base.ui.wm_state('normal')
+		else:
+			self.base.ui.wm_state('zoomed')
+		self.fullscreenBool = not(self.fullscreenBool)
+
 	def bgColor(self, event=None):
-		self.base.ui['background']='#{}'.format(hex(rand.randint(0,16777215)).split('x')[-1].zfill(6))
+		initCol=list(self.canvas['background'].split('#')[-1])
+		initR=int(initCol[0]+initCol[1],16)
+		initG=int(initCol[2]+initCol[3],16)
+		initB=int(initCol[4]+initCol[5],16)
+		color=colorchooser.askcolor(title='New Background Color',initialcolor=(initR,initG,initB))[1]
+		self.base.ui['background']=color
+		self.canvas['background']=color
 
 	def movement(self, event=None):
 		if event == None:
@@ -146,6 +145,7 @@ class Game:
 		newcoords = [min(max(int(x),1),self.worldSize[newcoords.index(x)]) for x in newcoords]
 		self.playerPos = newcoords
 		self.redraw()
+
 
 
 

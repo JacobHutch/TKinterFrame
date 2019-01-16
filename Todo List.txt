@@ -1,49 +1,22 @@
 Thoughts/Notes on Now:----------------------------------------------------------
-- New commit, new me
-
-- I fixed the squares, they actually scale the right way now
-
-- I now need to fix the display system
-  - I also would like to sort out any redundancies and temp variables I have
-    before I keep going
-
-- Playing with the sizes, I've noted that the world size can be about 2000^2
-  max with the random colors, and the camera size probably shouldn't go over 75
----
-- So I'm still trying to limit the display, I fixed the index errors though
-
-- I've noticed my code just gets worse and worse as I progress oof
-
-- Ok I had a crazy idea: what if I make all the tiles objects? so I set them
-  equal to a variable and put them in an array, then only change the colors?
-  idk if that would be more or less inefficient
-  - I don't think it'll be very efficient
-
-- I lied about the tile number, it shouldn't go over 45, it can go up to around
-  75 without being detrimental, but it's noticeable from 50 upwards
-
-- I just spent 20 minutes making a function that maximizes the window when you
-  press a button, and then I remembered it was pointless
-
-- I should figure out how to pull branches
-
-- I'm kinda thinking big right now, I might create the event loop now before I
-  continue with the display. Also, I'm thinking of making the world it's own
-  object, which might be overkill idk
-
-- Ok I tried the event loop and now I'm unsure if I need it again
-  - I'll figure it out Later
-
-- I think I need to rewrite some or most of the display function
-
-- I should probably start using branches
-  - And to do that I gotta modulate some stuff
-  - Nvm I don't wanna
-
-- For my event loop I think I'll just call it with no delay, so long as it
-  doesn't clog up anything
-
-- Holy moly I actually finished the display
+- I have so much freedom now I don't even know where I should start
+  - Wait yes I do, the world gen
+    - Probably should be a new file
+- For the world gen I think I'm eventually gonna move all world related
+  functions to the world gen file
+  - Right now I'm just keeping it as only the world gen function, but all the
+    other stuff is too messy right now to change
+- Everything is very inefficient, and whenever I add stuff it gets worse
+- Ok hear me out: chunks
+  - I made a nice thing but it's inefficient as flip
+  - It's way more controlled, but what once took .03 seconds now takes 6.3
+  - I didn't lower the omega value either
+- Chunks will most likely take the same amount or more time to load, so I need
+  a good size, probably gonna be 10x10
+  - 10x10 takes .05s, and 25x25 takes ~<.5s, so I might be able to get away
+    with 10x10
+    - Hey I realized the print function is doubling the time
+- Fixed the orientation for real this time
 --------------------------------------------------------------------------------
 
 
