@@ -17,6 +17,10 @@ Thoughts/Notes on Now:----------------------------------------------------------
     with 10x10
     - Hey I realized the print function is doubling the time
 - Fixed the orientation for real this time
+- Should all objects be in separate files?
+  - Regardless, I'm gonna work on fixing my current code to adhere to the
+    oop principles, gotta  e n c a p s u l a t e  and abstract and other things
+    I probably don't understand as much as I think I do
 --------------------------------------------------------------------------------
 
 

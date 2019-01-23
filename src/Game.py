@@ -52,7 +52,7 @@ class Game:
 
 
 	def worldInit(self,width=500,height=500):
-		self.displaySize = 25	#The all-controlling independent variable - This needs to be odd or I'll cry
+		self.displaySize = 100	#The all-controlling independent variable - This needs to be odd or I'll cry
 		self.displayDiff = [self.worldSize[0]-self.displaySize,self.worldSize[1]-self.displaySize]
 		self.playerOrigin = (self.displaySize//2+1,self.displaySize//2+1)
 		self.playerPos = [self.playerOrigin[0],self.playerOrigin[1]]

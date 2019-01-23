@@ -1,37 +1,18 @@
-import random as rand
+import random
 import time
 import math
+from WorldColor import WorldColor
 
-class WorldColor:
-	def __init__(self):
-		self.cra = [0,127,0,127,40,127]
-	def colorTest(self):
-		return '#2f9f9f'
-	def colorTimeTest(self):
-		self.timeTestCount+=1
-		return '#'+hex(self.timeTestCount*1024).split('x')[-1].zfill(6)
-	def colorVoid(self):
-		return '#000000'
-	def colorRandom(self):
-		return '#{}{}{}'.format(hex(rand.randint(self.cra[0],self.cra[1])).split('x')[-1].zfill(2),hex(rand.randint(self.cra[2],self.cra[3])).split('x')[-1].zfill(2),hex(rand.randint(self.cra[4],self.cra[5])).split('x')[-1].zfill(2))
-	def colorGrass(self):
-		g = rand.randint(127,187)
-		r = g+rand.randint(-127,0)
-		b = rand.randint(27,77)
-		r = hex(r).split('x')[-1].zfill(2)
-		g = hex(g).split('x')[-1].zfill(2)
-		b = hex(b).split('x')[-1].zfill(2)
-		color = '#'+r+g+b
-		return color
-
-class World(WorldColor):
+class World:
 	def __init__(self,worldSize=(100,100)):
-		#Eventually the other stuff will be here and the entire world stuff will hopefully be here
 		self.worldSize=worldSize
+		self.colorEngine = WorldColor()
 		self.changedColors=[]
-		self.cra = [0,127,0,127,40,127]
+
 		self.colorReference = {
-		'void':self.colorVoid,'random':self.colorRandom,'grass':self.colorGrass,'conicTest':self.colorTest
+		'test':self.colorEngine.test,'void':self.colorEngine.void,
+		'random':self.colorEngine.random,'grass':self.colorEngine.grass,
+		'water':self.colorEngine.water
 		}
 
 	def worldGen(self):
@@ -47,11 +28,10 @@ class World(WorldColor):
 		self.lakeCoords = []
 		numlakes = 10
 		for i in range(numlakes):
-			self.lakeCoords.append((rand.randint(0,self.worldSize[0]),rand.randint(0,self.worldSize[1])))
-		print(self.lakeCoords)
+			self.lakeCoords.append((random.randint(0,self.worldSize[0]),random.randint(0,self.worldSize[1])))
 		for i in self.lakeCoords:
-			self.conic((i[0],i[1]),rand.randint(self.lakeConstraints[0][0],self.lakeConstraints[0][1]),
-			rand.randint(self.lakeConstraints[1][0],self.lakeConstraints[1][1]),'conicTest')
+			self.conic((i[0],i[1]),random.randint(self.lakeConstraints[0][0],self.lakeConstraints[0][1]),
+			random.randint(self.lakeConstraints[1][0],self.lakeConstraints[1][1]),'water')
 		#self.conic((12,12),8,5,'conicTest')
 		self.colorChange()
 		self.worldGenTime = format(time.time() - self.worldGenTime, '0.2f')
@@ -68,10 +48,6 @@ class World(WorldColor):
 		for y in range(self.worldSize[1]):
 			for x in range(self.worldSize[0]):
 				self.changeInternal(x,y,'random')
-
-	def randColor(self):
-		color = '#{}{}{}'.format(hex(rand.randint(self.cra[0],self.cra[1])).split('x')[-1].zfill(2),hex(rand.randint(self.cra[2],self.cra[3])).split('x')[-1].zfill(2),hex(rand.randint(self.cra[4],self.cra[5])).split('x')[-1].zfill(2))
-		return color
 
 	def grass(self):
 		print('Loading grass\n')
