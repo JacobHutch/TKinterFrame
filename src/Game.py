@@ -1,172 +1,134 @@
 '''
 Concept: A top-down walking simulator
-
-So I think what I'm gonna do is have the frame app, which the game app will pass
-through as an argument
-Ex:
-From Frame import App
-class test:
-	def __init__(self, Frame)
 '''
 
-import Frame as tkf
 import tkinter as tk
-from tkinter import simpledialog
-from tkinter import colorchooser
 import random as rand
+from Frame import App
 from WorldGen import World
-
-
-rand.seed(1)
-appOptions={'name':'Potential Walking Simulator',
-			'res':(1,1),'bg':'#123456','size':(502,523)}
+from CommandCenter import Commander
 
 class Game:
-	def __init__(self, App):
-		self.base = App
-		self.menuSetup()
+	def __init__(self,resolution=(500,500),worldSize=(100,100),tileAmount=25):
+		self.__canvasSize = resolution
+		self.__worldSize = worldSize
+		self.__displaySize = tileAmount
+		self.__appOptions = {
+			'name':'Potential Walking Simulator','res':(1,1),
+			'bg':'#123456','size':(self.__canvasSize[0]+2,self.__canvasSize[1]+23)
+		}
+		self.__base = App(**self.__appOptions)
+		self.__com = Commander(self)
+		rand.seed(1)
 
 		#Dict format: 'char':function
-		self.keyBinds={'q':self.kill,'t':self.mosaicChange,'b':self.bgColor,
-		'Up':self.movement,'Down':self.movement,'Left':self.movement,
-		'Right':self.movement,'r':self.movement,'c':self.coordChange
-		}
-		self.base.bindKeys(**self.keyBinds)
-		self.gameTick = 60  #Ticks per second
+		self.__movementKeyBinds={'Up':self.movement,'Down':self.movement,'Left':self.movement,
+								'Right':self.movement}
+		self.__base.bindKeys(**self.__movementKeyBinds)
 
-		self.fullscreenBool = False
-		self.mosaicBool = False
-		self.mosaic = int(self.mosaicBool)
+		self.__mosaic = 0 #Temp
 
-		self.canvasSize=(500,500)
-		self.worldSize=(100,100)
-		self.world = World(self.worldSize)
-		self.world.worldGen()
-		self.worldInit(self.canvasSize[0],self.canvasSize[1])
-		self.worldDisplay()
+		self.__world = World(self.__worldSize)
+
+		self.__displayDiff = [self.__worldSize[0]-self.__displaySize,self.__worldSize[1]-self.__displaySize]
+		self.__playerOrigin = (self.__displaySize//2+1,self.__displaySize//2+1)
+		self.__playerPos = [self.__playerOrigin[0]+10,self.__playerOrigin[1]+10]
+		self.__squareSize = max(self.__canvasSize) // self.__displaySize
+		self.__tileList = {}
+
+		self.__topLabel=tk.Label(self.__base.getUi(), background='#cfcfcf',
+								text='X: {}\tY: {}'.format(self.__playerPos[0],self.__playerPos[1]))
+		self.__topLabel.pack(fill=tk.BOTH, expand=0)
+		self.__canvas=tk.Canvas(self.__base.getUi(), width=self.__canvasSize[0], height=self.__canvasSize[1],background=self.__base.getBg(),highlightthickness=0)
+		self.__canvas.pack(fill=tk.NONE, expand=1)
+
+		self.__createTiles()
+		self.colorWorld()
+
+		self.__base.getUi().mainloop()
+
+	def __createTiles(self):
+		for y in range(self.__displaySize):
+			for x in range(self.__displaySize):
+				self.__tileList[str(x)+'x'+str(y)] = self.__canvas.create_rectangle(self.__squareSize*x+self.__mosaic,self.__squareSize*y+self.__mosaic,
+					self.__squareSize*(x+1)-self.__mosaic,self.__squareSize*(y+1)-self.__mosaic,
+					fill='#ffffff',outline='',tags=('tile'))
 		self.drawPlayer()
 
-		self.eventLoop()
-
-		self.base.ui.mainloop()
-
-
-	def worldInit(self,width=500,height=500):
-		self.displaySize = 100	#The all-controlling independent variable - This needs to be odd or I'll cry
-		self.displayDiff = [self.worldSize[0]-self.displaySize,self.worldSize[1]-self.displaySize]
-		self.playerOrigin = (self.displaySize//2+1,self.displaySize//2+1)
-		self.playerPos = [self.playerOrigin[0],self.playerOrigin[1]]
-		self.xDiff = 0
-		self.yDiff = 0
-		self.squareSize = max([width,height]) // self.displaySize
-
-		self.topLabel=tk.Label(self.base.ui, background='#cfcfcf',
-								text='X: {}\tY: {}'.format(self.playerPos[0],self.playerPos[1]))
-		self.topLabel.pack(fill=tk.BOTH, expand=0)
-		self.canvas=tk.Canvas(self.base.ui, width=width, height=height,background=self.base.bg,highlightthickness=0)
-		self.canvas.pack(fill=tk.NONE, expand=1)
-
-	def worldDisplay(self):
-		for y in range(self.displaySize):
-			for x in range(self.displaySize):
-				self.canvas.create_rectangle(self.squareSize*x+self.mosaic,self.squareSize*y+self.mosaic,
-				self.squareSize*(x+1)-self.mosaic,self.squareSize*(y+1)-self.mosaic,
-				fill=self.world.mapExternal[min(max(y+self.yDiff,0),self.worldSize[1]-1)][min(max(x+self.xDiff,0),self.worldSize[0]-1)],outline='',tags=('tile'))
+	def colorWorld(self):
+		self.__xDiff = min(max(self.__playerPos[0] - self.__playerOrigin[0],0),self.__displayDiff[0])
+		self.__yDiff = min(max(self.__playerPos[1] - self.__playerOrigin[1],0),self.__displayDiff[1])
+		for y in range(self.__displaySize):
+			for x in range(self.__displaySize):
+				self.__canvas.itemconfig(self.__tileList[str(x)+'x'+str(y)],
+					fill=self.__world.getMap()[min(max(y+self.__yDiff,0),self.__worldSize[1]-1)][min(max(x+self.__xDiff,0),self.__worldSize[0]-1)])
+		self.__topLabel['text'] = 'X: {}\tY: {}'.format(self.__playerPos[0],self.__playerPos[1])
+		self.averageColor()
 
 	def drawPlayer(self):
-		radius = 2
+		negativeRadius = 2
 		pos = [1,1]
 		for i in range(2):
-			if self.playerPos[i] > self.worldSize[i] - self.playerOrigin[i]:
-				pos[i] = self.playerPos[i]-self.displayDiff[i]
-			elif self.playerPos[i] <= self.worldSize[i] - self.playerOrigin[i] and self.playerPos[i] >= self.playerOrigin[i]:
-				pos[i] = self.playerOrigin[i]
+			if self.__playerPos[i] > self.__worldSize[i] - self.__playerOrigin[i]:
+				pos[i] = self.__playerPos[i]-self.__displayDiff[i]
+			elif self.__playerPos[i] <= self.__worldSize[i] - self.__playerOrigin[i] and self.__playerPos[i] >= self.__playerOrigin[i]:
+				pos[i] = self.__playerOrigin[i]
 			else:
-				pos[i] = self.playerPos[i]
+				pos[i] = self.__playerPos[i]
 
-		x1,x2,y1,y2 = (self.squareSize*(pos[0]-1)+radius,self.squareSize*pos[0]-radius,
-						self.squareSize*(pos[1]-1)+radius,self.squareSize*pos[1]-radius)
-		self.canvas.create_rectangle(x1,y1,x2,y2,fill='#ffffff',outline='',tags=('player'))
-
-	def redraw(self):
-		self.xDiff = min(max(self.playerPos[0] - self.playerOrigin[0],0),self.displayDiff[0])
-		self.yDiff = min(max(self.playerPos[1] - self.playerOrigin[1],0),self.displayDiff[1])
-		self.canvas.delete('tile','player')
-		self.worldDisplay()
-		self.drawPlayer()
-		self.topLabel['text'] = 'X: {}\tY: {}'.format(self.playerPos[0],self.playerPos[1])
-
-
-
-	#Game Commands
-	def kill(self, event=None):
-		self.base.ui.destroy()
-
-	def fullscreen(self, event=None):
-		if self.fullscreenBool:
-			self.base.ui.wm_state('normal')
-		else:
-			self.base.ui.wm_state('zoomed')
-		self.fullscreenBool = not(self.fullscreenBool)
-
-	def bgColor(self, event=None):
-		initCol=list(self.canvas['background'].split('#')[-1])
-		initR=int(initCol[0]+initCol[1],16)
-		initG=int(initCol[2]+initCol[3],16)
-		initB=int(initCol[4]+initCol[5],16)
-		color=colorchooser.askcolor(title='New Background Color',initialcolor=(initR,initG,initB))[1]
-		self.base.ui['background']=color
-		self.canvas['background']=color
+		x1,x2,y1,y2 = (self.__squareSize*(pos[0]-1)+negativeRadius,self.__squareSize*pos[0]-negativeRadius,
+						self.__squareSize*(pos[1]-1)+negativeRadius,self.__squareSize*pos[1]-negativeRadius)
+		self.__canvas.delete('player')
+		self.__canvas.create_rectangle(x1,y1,x2,y2,fill='#ffffff',outline='',tags=('player'))
 
 	def movement(self, event=None):
-		if event == None:
-			self.playerPos = [self.playerOrigin[0],self.playerOrigin[1]]
-		elif event.keysym == 'r':
-			self.playerPos = [self.playerOrigin[0],self.playerOrigin[1]]
-		elif event.keysym == 'Up':
-			self.playerPos[1] = max(self.playerPos[1]-1,1)
+		if event.keysym == 'Up':
+			self.__playerPos[1] = max(self.__playerPos[1]-1,1)
 		elif event.keysym == 'Down':
-			self.playerPos[1] = min(self.playerPos[1]+1,self.worldSize[1])
+			self.__playerPos[1] = min(self.__playerPos[1]+1,self.__worldSize[1])
 		elif event.keysym == 'Left':
-			self.playerPos[0] = max(self.playerPos[0]-1,1)
+			self.__playerPos[0] = max(self.__playerPos[0]-1,1)
 		elif event.keysym == 'Right':
-			self.playerPos[0] = min(self.playerPos[0]+1,self.worldSize[0])
-		print(self.playerPos)
-		self.redraw()
+			self.__playerPos[0] = min(self.__playerPos[0]+1,self.__worldSize[0])
+		self.colorWorld()
+		self.drawPlayer()
 
-	def mosaicChange(self, event=None):
-		self.mosaicBool = not(self.mosaicBool)
-		self.mosaic = int(self.mosaicBool)
-		self.redraw()
+	def averageColor(self, event=None):
+		leng = len(self.__tileList)
+		r,g,b = 0,0,0
+		for i in self.__tileList:
+			initCol=list(self.__canvas.itemcget(self.__tileList[i],'fill').split('#')[-1])
+			r+=int(initCol[0]+initCol[1],16)
+			g+=int(initCol[2]+initCol[3],16)
+			b+=int(initCol[4]+initCol[5],16)
+		r,g,b = round(r/leng),round(g/leng),round(b/leng)
+		color='#{}{}{}'.format(hex(r).split('x')[-1].zfill(2),hex(g).split('x')[-1].zfill(2),hex(b).split('x')[-1].zfill(2))
+		self.__base.getUi()['background']=color
+		self.__canvas['background']=color
 
-	def coordChange(self, event=None):
-		newcoords = simpledialog.askstring(title='Coord Change',prompt='New Coords x,y:')
-		newcoords = newcoords.split(',')
-		newcoords = [min(max(int(x),1),self.worldSize[newcoords.index(x)]) for x in newcoords]
-		self.playerPos = newcoords
-		self.redraw()
+	def getCanvas(self):
+		return self.__canvas
 
+	def getBase(self):
+		return self.__base
 
+	def getWorldSize(self):
+		return self.__worldSize
 
+	def getTileList(self):
+		return self.__tileList
 
-	#Menu has to be last for the sake of it
-	def menuSetup(self):
-		self.menu = tk.Menu(self.base.ui)
-		self.base.ui['menu'] = self.menu
+	def setPlayerPos(self,coords):
+		self.__playerPos = coords
 
-		self.menuFile = tk.Menu(self.menu, tearoff=0)
-		self.menuFile.add_command(label='Quit', command=self.kill, underline=0, accelerator='Q')
-		self.menu.add_cascade(label='File', underline=0, menu=self.menuFile)
+	def swapMosaic(self):
+		self.__mosaic = int(not(bool(self.__mosaic)))
+		self.__canvas.delete('tile')
+		self.__createTiles()
+		self.colorWorld()
 
-		self.menuGame = tk.Menu(self.menu, tearoff=0)
-		#self.menuGame.add_command(label='Change Color', command=self.bgColor, underline=0, accelerator='B')
-		self.menuGame.add_command(label='Reset Player', command=self.movement,underline=0, accelerator='R')
-		self.menu.add_cascade(label='Game', underline=0, menu=self.menuGame)
+	def eventLoop(self): #Available to implement, if/when is TBD
+		self.colorWorld()
+		self.__base.getUi().after(int(1000/60),self.eventLoop)
 
-	def eventLoop(self): #Waiting to implement, idk if I'll do it though
-		pass
-		#Which one would be best?:
-		#self.eventLoop()
-		#self.base.ui.after(int(1000/self.gameTick),self.eventLoop)
-
-test = Game(tkf.App(**appOptions))
+WalkingSimulator = Game((500,500),(100,100),25)

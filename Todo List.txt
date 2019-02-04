@@ -1,34 +1,14 @@
 Thoughts/Notes on Now:----------------------------------------------------------
-- I have so much freedom now I don't even know where I should start
-  - Wait yes I do, the world gen
-    - Probably should be a new file
-- For the world gen I think I'm eventually gonna move all world related
-  functions to the world gen file
-  - Right now I'm just keeping it as only the world gen function, but all the
-    other stuff is too messy right now to change
-- Everything is very inefficient, and whenever I add stuff it gets worse
-- Ok hear me out: chunks
-  - I made a nice thing but it's inefficient as flip
-  - It's way more controlled, but what once took .03 seconds now takes 6.3
-  - I didn't lower the omega value either
-- Chunks will most likely take the same amount or more time to load, so I need
-  a good size, probably gonna be 10x10
-  - 10x10 takes .05s, and 25x25 takes ~<.5s, so I might be able to get away
-    with 10x10
-    - Hey I realized the print function is doubling the time
-- Fixed the orientation for real this time
-- Should all objects be in separate files?
-  - Regardless, I'm gonna work on fixing my current code to adhere to the
-    oop principles, gotta  e n c a p s u l a t e  and abstract and other things
-    I probably don't understand as much as I think I do
+- I fixed the code, everything is more modular and wayyyy less messy
+  - This was actually a wild undertaking I'm so proud it's all fixed up
+- I'll get back to world gen soon, I have plans in mind
+- The event loop is there, just unused for now
+- I removed the menu because I don't want to deal with it and I never use it
 --------------------------------------------------------------------------------
 
 
 Stuff for Later:----------------------------------------------------------------
-- Keep fixing the display
-- Implement event loop?
-- Add world gen algorithms
-- Have a narrative
+- World Gen
 --------------------------------------------------------------------------------
 
 
@@ -36,14 +16,15 @@ Questions:----------------------------------------------------------------------
 - Idk if I should run the game immediately (during init) or later after the
   class object is created: basically, should the init function act as the main
   function?
+  - Yes
 
 - Should the menu just be in the game function?
   - I think for now I'm just gonna put it in Game.py
+    - Not anymore, now it's in CommandCenter
 --------------------------------------------------------------------------------
 
 
 Stuff for Later Later:----------------------------------------------------------
-- Clean up the pygame stuff (it's not broken, just in the way and incomplete)
-  - Pygame will be implemented after I have a more stable version for tkinter
-    apps
+- Have a narrative
+- Try to use the frame as a host for pygame games
 --------------------------------------------------------------------------------
