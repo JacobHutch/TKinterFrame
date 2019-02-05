@@ -31,16 +31,18 @@ class Game:
 		self.__world = World(self.__worldSize)
 
 		self.__displayDiff = [self.__worldSize[0]-self.__displaySize,self.__worldSize[1]-self.__displaySize]
-		self.__playerOrigin = (self.__displaySize//2+1,self.__displaySize//2+1)
-		self.__playerPos = [self.__playerOrigin[0]+10,self.__playerOrigin[1]+10]
+		self.__screenDiff = self.__displaySize//2+1
+		self.__playerPos = [rand.randint(1,self.__worldSize[0]),rand.randint(1,self.__worldSize[1])]
 		self.__squareSize = max(self.__canvasSize) // self.__displaySize
 		self.__tileList = {}
 
 		self.__topLabel=tk.Label(self.__base.getUi(), background='#cfcfcf',
 								text='X: {}\tY: {}'.format(self.__playerPos[0],self.__playerPos[1]))
-		self.__topLabel.pack(fill=tk.BOTH, expand=0)
+		self.__topLabel.grid(row=0,column=0,sticky='we')
 		self.__canvas=tk.Canvas(self.__base.getUi(), width=self.__canvasSize[0], height=self.__canvasSize[1],background=self.__base.getBg(),highlightthickness=0)
-		self.__canvas.pack(fill=tk.NONE, expand=1)
+		self.__canvas.grid(row=1,column=0,padx=1,pady=1)
+		self.__base.getUi().grid_columnconfigure(0,weight=1)
+		self.__base.getUi().grid_rowconfigure(1,weight=1)
 
 		self.__createTiles()
 		self.colorWorld()
@@ -56,8 +58,8 @@ class Game:
 		self.drawPlayer()
 
 	def colorWorld(self):
-		self.__xDiff = min(max(self.__playerPos[0] - self.__playerOrigin[0],0),self.__displayDiff[0])
-		self.__yDiff = min(max(self.__playerPos[1] - self.__playerOrigin[1],0),self.__displayDiff[1])
+		self.__xDiff = min(max(self.__playerPos[0] - self.__screenDiff,0),self.__displayDiff[0])
+		self.__yDiff = min(max(self.__playerPos[1] - self.__screenDiff,0),self.__displayDiff[1])
 		for y in range(self.__displaySize):
 			for x in range(self.__displaySize):
 				self.__canvas.itemconfig(self.__tileList[str(x)+'x'+str(y)],
@@ -69,10 +71,10 @@ class Game:
 		negativeRadius = 2
 		pos = [1,1]
 		for i in range(2):
-			if self.__playerPos[i] > self.__worldSize[i] - self.__playerOrigin[i]:
+			if self.__playerPos[i] > self.__worldSize[i] - self.__screenDiff:
 				pos[i] = self.__playerPos[i]-self.__displayDiff[i]
-			elif self.__playerPos[i] <= self.__worldSize[i] - self.__playerOrigin[i] and self.__playerPos[i] >= self.__playerOrigin[i]:
-				pos[i] = self.__playerOrigin[i]
+			elif self.__playerPos[i] <= self.__worldSize[i] - self.__screenDiff and self.__playerPos[i] >= self.__screenDiff:
+				pos[i] = self.__screenDiff
 			else:
 				pos[i] = self.__playerPos[i]
 
