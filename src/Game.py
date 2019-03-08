@@ -32,7 +32,7 @@ class Game:
 
 		self.__displayDiff = [self.__worldSize[0]-self.__displaySize,self.__worldSize[1]-self.__displaySize]
 		self.__screenDiff = self.__displaySize//2+1
-		self.__playerPos = [rand.randint(1,self.__worldSize[0]),rand.randint(1,self.__worldSize[1])]
+		self.__playerPos = [self.__worldSize[0]//2,self.__worldSize[1]//2]
 		self.__squareSize = max(self.__canvasSize) // self.__displaySize
 		self.__tileList = {}
 
