@@ -1,14 +1,13 @@
 Thoughts/Notes on Now:----------------------------------------------------------
-- I fixed the code, everything is more modular and wayyyy less messy
-  - This was actually a wild undertaking I'm so proud it's all fixed up
-- I'll get back to world gen soon, I have plans in mind
-- The event loop is there, just unused for now
-- I removed the menu because I don't want to deal with it and I never use it
+- I'm going to try and optimize more in the world display
+  - I think I'll draw the world in chunks, and move it instead of recoloring
+    tiles, idk which will be faster though
 --------------------------------------------------------------------------------
 
 
 Stuff for Later:----------------------------------------------------------------
 - World Gen
+- Images instead of solid colors
 --------------------------------------------------------------------------------
 
 

@@ -7,6 +7,7 @@ import random as rand
 from Frame import App
 from WorldGen import World
 from CommandCenter import Commander
+from PIL import ImageTk, Image
 
 class Game:
 	def __init__(self,resolution=(500,500),worldSize=(100,100),tileAmount=25):
