@@ -10,10 +10,24 @@ from CommandCenter import Commander
 from PIL import ImageTk, Image
 
 class Game:
-	def __init__(self,resolution=(500,500),worldSize=(100,100),tileAmount=25):
-		self.__canvasSize = resolution
+	def __init__(self,canvasSize=(500,500),worldSize=(100,100),displaySize=25):
 		self.__worldSize = worldSize
-		self.__displaySize = tileAmount
+		self.__minDSize = 3
+		self.__maxDSize = 45
+		if canvasSize[0] == canvasSize[1]:
+			self.__displaySizeX = min(max(displaySize,self.__minDSize),self.__maxDSize)
+			self.__displaySizeY = self.__displaySizeX
+			self.__squareSize = canvasSize[0] // self.__displaySizeX
+		elif canvasSize[0] < canvasSize[1]:
+			self.__displaySizeX = min(max(displaySize,self.__minDSize),self.__maxDSize)
+			self.__squareSize = canvasSize[0] // self.__displaySizeX
+			self.__displaySizeY = canvasSize[1] // self.__squareSize
+		elif canvasSize[0] > canvasSize[1]:
+			self.__displaySizeY = min(max(displaySize,self.__minDSize),self.__maxDSize)
+			self.__squareSize = canvasSize[1] // self.__displaySizeY
+			self.__displaySizeX = canvasSize[0] // self.__squareSize
+		self.__canvasSize = (self.__squareSize * self.__displaySizeX,self.__squareSize * self.__displaySizeY)
+		print(self.__displaySizeX,self.__displaySizeY,self.__squareSize,self.__canvasSize)
 		self.__appOptions = {
 			'name':'Potential Walking Simulator','res':(1,1),
 			'bg':'#123456','size':(self.__canvasSize[0]+2,self.__canvasSize[1]+23)
@@ -31,10 +45,11 @@ class Game:
 
 		self.__world = World(self.__worldSize)
 
-		self.__displayDiff = [self.__worldSize[0]-self.__displaySize,self.__worldSize[1]-self.__displaySize]
-		self.__screenDiff = self.__displaySize//2+1
+		self.__displayDiff = [self.__worldSize[0]-self.__displaySizeX,self.__worldSize[1]-self.__displaySizeY]
+		self.__screenDiff = [self.__displaySizeX//2+1,self.__displaySizeY//2+1]
+
 		self.__playerPos = [self.__worldSize[0]//2,self.__worldSize[1]//2]
-		self.__squareSize = max(self.__canvasSize) // self.__displaySize
+
 		self.__tileList = {}
 
 		self.__topLabel=tk.Label(self.__base.getUi(), background='#cfcfcf',
@@ -51,18 +66,18 @@ class Game:
 		self.__base.getUi().mainloop()
 
 	def __createTiles(self):
-		for y in range(self.__displaySize):
-			for x in range(self.__displaySize):
+		for y in range(self.__displaySizeY):
+			for x in range(self.__displaySizeX):
 				self.__tileList[str(x)+'x'+str(y)] = self.__canvas.create_rectangle(self.__squareSize*x+self.__mosaic,self.__squareSize*y+self.__mosaic,
 					self.__squareSize*(x+1)-self.__mosaic,self.__squareSize*(y+1)-self.__mosaic,
 					fill='#ffffff',outline='',tags=('tile'))
-		self.drawPlayer()
+		#self.drawPlayer()
 
 	def colorWorld(self):
-		self.__xDiff = min(max(self.__playerPos[0] - self.__screenDiff,0),self.__displayDiff[0])
-		self.__yDiff = min(max(self.__playerPos[1] - self.__screenDiff,0),self.__displayDiff[1])
-		for y in range(self.__displaySize):
-			for x in range(self.__displaySize):
+		self.__xDiff = min(max(self.__playerPos[0] - self.__screenDiff[0],0),self.__displayDiff[0])
+		self.__yDiff = min(max(self.__playerPos[1] - self.__screenDiff[1],0),self.__displayDiff[1])
+		for y in range(self.__displaySizeY):
+			for x in range(self.__displaySizeX):
 				self.__canvas.itemconfig(self.__tileList[str(x)+'x'+str(y)],
 					fill=self.__world.getMap()[min(max(y+self.__yDiff,0),self.__worldSize[1]-1)][min(max(x+self.__xDiff,0),self.__worldSize[0]-1)])
 		self.__topLabel['text'] = 'X: {}\tY: {}'.format(self.__playerPos[0],self.__playerPos[1])
@@ -72,10 +87,10 @@ class Game:
 		negativeRadius = 2
 		pos = [1,1]
 		for i in range(2):
-			if self.__playerPos[i] > self.__worldSize[i] - self.__screenDiff:
+			if self.__playerPos[i] > self.__worldSize[i] - self.__screenDiff[i]:
 				pos[i] = self.__playerPos[i]-self.__displayDiff[i]
-			elif self.__playerPos[i] <= self.__worldSize[i] - self.__screenDiff and self.__playerPos[i] >= self.__screenDiff:
-				pos[i] = self.__screenDiff
+			elif self.__playerPos[i] <= self.__worldSize[i] - self.__screenDiff[i] and self.__playerPos[i] >= self.__screenDiff[i]:
+				pos[i] = self.__screenDiff[i]
 			else:
 				pos[i] = self.__playerPos[i]
 
@@ -83,6 +98,7 @@ class Game:
 						self.__squareSize*(pos[1]-1)+negativeRadius,self.__squareSize*pos[1]-negativeRadius)
 		self.__canvas.delete('player')
 		self.__canvas.create_rectangle(x1,y1,x2,y2,fill='#ffffff',outline='',tags=('player'))
+		self.__canvas.update_idletasks()
 
 	def movement(self, event=None):
 		if event.keysym == 'Up':
@@ -125,7 +141,7 @@ class Game:
 		self.__playerPos = coords
 
 	def swapMosaic(self):
-		self.__mosaic = int(not(bool(self.__mosaic)))
+		self.__mosaic = 1 - self.__mosaic
 		self.__canvas.delete('tile')
 		self.__createTiles()
 		self.colorWorld()
@@ -134,4 +150,4 @@ class Game:
 		self.colorWorld()
 		self.__base.getUi().after(int(1000/60),self.eventLoop)
 
-WalkingSimulator = Game((500,500),(100,100),25)
+WalkingSimulator = Game((500,300),(100,100),25)

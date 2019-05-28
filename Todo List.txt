@@ -2,6 +2,12 @@ Thoughts/Notes on Now:----------------------------------------------------------
 - I'm going to try and optimize more in the world display
   - I think I'll draw the world in chunks, and move it instead of recoloring
     tiles, idk which will be faster though
+  - I figured it out, I'm very dumb
+  - I needed to call canvas.update_idletasks() so the canvas wouldn't get
+    clogged
+  - World chunks are still in my head though
+    - If I want to have textures, that will require smooth scrolling, which
+      means I'll need to have dynamic tiles rather than 'pixels'
 --------------------------------------------------------------------------------
 
 
