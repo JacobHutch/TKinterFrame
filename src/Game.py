@@ -62,6 +62,7 @@ class Game:
 
 		self.__createTiles()
 		self.colorWorld()
+		self.drawPlayer()
 
 		self.__base.getUi().mainloop()
 
@@ -150,4 +151,4 @@ class Game:
 		self.colorWorld()
 		self.__base.getUi().after(int(1000/60),self.eventLoop)
 
-WalkingSimulator = Game((500,300),(100,100),25)
+WalkingSimulator = Game((1280,720),(40,40),45)
